@@ -1,0 +1,196 @@
+/* PhotoAnalyzer.css */
+
+/* Re-use layout from LiveAnalyzer */
+.photo-display {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.photo-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ── Scan zone (same as live) ─────────────────────────────── */
+/* zone-* and corner-* classes are shared from LiveAnalyzer.css */
+/* Import that file here too */
+.scan-zone {
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  right: 15%;
+  bottom: 15%;
+  pointer-events: none;
+}
+
+.scan-zone-label {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.62rem;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+
+.corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-color: var(--accent);
+  border-style: solid;
+  border-width: 0;
+  transition: border-color 0.3s;
+}
+
+.corner-tl { top: 0;    left: 0;  border-top-width: 2px;    border-left-width: 2px;  }
+.corner-tr { top: 0;    right: 0; border-top-width: 2px;    border-right-width: 2px; }
+.corner-bl { bottom: 0; left: 0;  border-bottom-width: 2px; border-left-width: 2px;  }
+.corner-br { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+
+.zone-ripe   .corner { border-color: var(--ripe);   }
+.zone-semi   .corner { border-color: var(--semi);   }
+.zone-unripe .corner { border-color: var(--unripe); }
+.zone-none   .corner { border-color: var(--accent); }
+
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--scan-line) 20%, var(--scan-line) 80%, transparent);
+  box-shadow: 0 0 8px var(--scan-line);
+  animation: scanDown 2.4s linear infinite;
+  opacity: 0.7;
+}
+
+/* ── Loading overlay ──────────────────────────────────────── */
+.photo-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 0.75rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  backdrop-filter: blur(2px);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--panel-border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error banner ─────────────────────────────────────────── */
+.photo-error-banner {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,68,68,0.12);
+  border: 1px solid #ff4444;
+  color: #ff6666;
+  font-size: 0.65rem;
+  padding: 8px 16px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Change photo button ──────────────────────────────────── */
+.change-photo-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* ── Drop zone ────────────────────────────────────────────── */
+.drop-zone {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  border: 2px dashed var(--panel-border);
+  margin: 40px;
+  width: calc(100% - 80px);
+  height: calc(100% - 80px);
+  transition: all 0.2s ease;
+  background: transparent;
+  animation: fadeIn 0.4s ease both;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(0, 220, 180, 0.04);
+}
+
+.drop-zone.drag-over {
+  box-shadow: inset 0 0 40px rgba(0, 220, 180, 0.08);
+}
+
+.drop-icon {
+  font-size: 3rem;
+  color: var(--dim);
+  transition: color 0.2s;
+}
+
+.drop-zone:hover .drop-icon,
+.drop-zone.drag-over .drop-icon {
+  color: var(--accent);
+}
+
+.drop-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.04em;
+}
+
+.drop-sub {
+  font-size: 0.68rem;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+}
+
+.drop-formats {
+  font-size: 0.58rem;
+  color: var(--accent-dim);
+  letter-spacing: 0.14em;
+  margin-top: 4px;
+}
+
+.drop-error {
+  font-size: 0.65rem;
+  color: #ff6666;
+  letter-spacing: 0.06em;
+  margin-top: 8px;
+}
