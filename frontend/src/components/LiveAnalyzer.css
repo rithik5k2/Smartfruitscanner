@@ -1,23 +1,125 @@
-/* LiveAnalyzer.css */
+/* ============================================================
+   LiveAnalyzer.css  —  Redesigned  (same palette, fully responsive)
+   Desktop : side-by-side feed + result panel
+   Tablet  : feed on top, panel collapses below
+   Mobile  : stacked, compact, touch-friendly
+   ============================================================ */
 
+/* ── Root shell ──────────────────────────────────────────────── */
 .analyzer-root {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;           /* dvh = device viewport height, respects mobile browsers */
   display: flex;
   flex-direction: column;
+  background: var(--bg);
   overflow: hidden;
 }
 
+/* ── Top HUD bar ─────────────────────────────────────────────── */
+.hud-bar {
+  position: relative;       /* not absolute — part of flex flow */
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  height: 46px;
+  flex-shrink: 0;
+  background: rgba(10, 12, 18, 0.96);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+.hud-left,
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Pulsing live indicator dot */
+.hud-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ripe);
+  box-shadow: 0 0 8px var(--ripe);
+  animation: dotPulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hud-divider {
+  color: var(--dim);
+  font-size: 0.7rem;
+}
+
+.mode-tag {
+  font-family: var(--font-hud);
+  font-size: 0.62rem;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  background: rgba(0, 220, 180, 0.08);
+  border: 1px solid rgba(0, 220, 180, 0.2);
+  border-radius: 3px;
+  padding: 2px 8px;
+}
+
+.clock {
+  font-family: var(--font-hud);
+  font-size: 0.68rem;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+}
+
+/* Minimal close button — desktop only */
+.hud-close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: var(--dim);
+  font-size: 0.65rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.hud-close-btn:hover {
+  background: rgba(255, 60, 60, 0.14);
+  border-color: rgba(255, 60, 60, 0.35);
+  color: #ff6666;
+}
+
+/* ── Main body: feed + panel side by side ────────────────────── */
 .analyzer-body {
   display: flex;
   flex: 1;
-  margin-top: 44px;
-  margin-bottom: 32px;
   overflow: hidden;
+  min-height: 0;            /* important: lets flex children shrink below content size */
 }
 
-/* ── Camera feed area ─────────────────────────────────────── */
+/* ── Camera feed area ────────────────────────────────────────── */
 .feed-area {
   position: relative;
   flex: 1;
@@ -26,6 +128,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  min-width: 0;
 }
 
 .live-video {
@@ -35,15 +138,15 @@
   display: block;
 }
 
-/* ── Scan zone overlay ────────────────────────────────────── */
+/* ── Scan zone ───────────────────────────────────────────────── */
 .scan-zone {
   position: absolute;
   top: 15%;
-  left: 20%;
-  right: 20%;
+  left: 18%;
+  right: 18%;
   bottom: 15%;
   pointer-events: none;
-  transition: border-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .scan-zone-label {
@@ -51,27 +154,29 @@
   top: -22px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.62rem;
-  color: var(--accent);
-  letter-spacing: 0.14em;
+  font-family: var(--font-hud);
+  font-size: 0.58rem;
+  color: rgba(0, 220, 180, 0.55);
+  letter-spacing: 0.18em;
   white-space: nowrap;
+  text-transform: uppercase;
 }
 
-/* ── Colour states for scan zone corners ──────────────────── */
+/* Corner bracket colours by ripeness */
 .zone-ripe   .corner { border-color: var(--ripe);   }
 .zone-semi   .corner { border-color: var(--semi);   }
 .zone-unripe .corner { border-color: var(--unripe); }
 .zone-none   .corner { border-color: var(--accent); }
 
-/* ── Corner bracket shapes ────────────────────────────────── */
+/* Corner bracket shapes */
 .corner {
   position: absolute;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-color: var(--accent);
   border-style: solid;
   border-width: 0;
-  transition: border-color 0.3s;
+  transition: border-color 0.35s ease;
 }
 
 .corner-tl { top: 0;    left: 0;  border-top-width: 2px;    border-left-width: 2px;  }
@@ -79,7 +184,7 @@
 .corner-bl { bottom: 0; left: 0;  border-bottom-width: 2px; border-left-width: 2px;  }
 .corner-br { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
 
-/* ── Animated scan line ───────────────────────────────────── */
+/* Scan line */
 .scan-line {
   position: absolute;
   left: 0;
@@ -88,35 +193,212 @@
   background: linear-gradient(
     90deg,
     transparent,
-    var(--scan-line) 20%,
-    var(--scan-line) 80%,
+    var(--scan-line) 25%,
+    var(--scan-line) 75%,
     transparent
   );
   box-shadow: 0 0 8px var(--scan-line);
   animation: scanDown 2.4s linear infinite;
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
-/* ── Error state ──────────────────────────────────────────── */
+@keyframes scanDown {
+  from { top: 0%; }
+  to   { top: 100%; }
+}
+
+/* ── Bottom hint bar ─────────────────────────────────────────── */
+.hint-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 34px;
+  flex-shrink: 0;
+  background: rgba(10, 12, 18, 0.94);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-family: var(--font-hud);
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+}
+
+.hint-center {
+  color: rgba(0, 220, 180, 0.4);
+  letter-spacing: 0.1em;
+}
+
+.hint-bar kbd {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--white);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--font-hud);
+  font-size: 0.55rem;
+  margin-right: 4px;
+}
+
+/* ── Error state ─────────────────────────────────────────────── */
 .feed-error {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 16px;
-  color: var(--dim);
   text-align: center;
-  padding: 40px;
+  padding: 40px 24px;
 }
 
 .error-icon {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   color: #ff4444;
 }
 
 .error-msg {
-  font-size: 0.8rem;
+  font-family: var(--font-hud);
+  font-size: 0.75rem;
   color: var(--dim);
-  max-width: 360px;
-  line-height: 1.5;
+  max-width: 320px;
+  line-height: 1.6;
   letter-spacing: 0.04em;
+}
+
+.btn {
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  padding: 9px 20px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-border);
+  background: transparent;
+  color: var(--dim);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-transform: uppercase;
+}
+
+.btn-primary {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-primary:hover {
+  background: rgba(0, 220, 180, 0.1);
+  box-shadow: 0 0 16px rgba(0, 220, 180, 0.15);
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Tablet portrait (≤ 900px): stack feed on top, panel below ── */
+@media (max-width: 900px) {
+
+  .analyzer-body {
+    flex-direction: column;
+  }
+
+  /* Feed takes top 55% of available space */
+  .feed-area {
+    flex: 0 0 55%;
+    width: 100%;
+  }
+
+  /* Scan zone slightly smaller to fit narrower viewport */
+  .scan-zone {
+    top: 10%;
+    left: 10%;
+    right: 10%;
+    bottom: 10%;
+  }
+
+  /* Result panel scrolls horizontally to fit below feed */
+  .hint-bar .hint-center {
+    display: none;    /* hide middle hint to save space */
+  }
+
+}
+
+/* ── Mobile (≤ 600px): compact everything ──────────────────── */
+@media (max-width: 600px) {
+
+  /* Tighter HUD bar */
+  .hud-bar {
+    height: 42px;
+    padding: 0 12px;
+  }
+
+  /* Hide divider and mode tag on very small screens */
+  .hud-divider,
+  .mode-tag {
+    display: none;
+  }
+
+  .brand {
+    font-size: 0.75rem;
+  }
+
+  .clock {
+    font-size: 0.6rem;
+  }
+
+  /* Feed takes more vertical space */
+  .feed-area {
+    flex: 0 0 50%;
+  }
+
+  /* Tighter scan zone */
+  .scan-zone {
+    top: 8%;
+    left: 8%;
+    right: 8%;
+    bottom: 8%;
+  }
+
+  /* Smaller corner brackets */
+  .corner {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Compressed hint bar */
+  .hint-bar {
+    height: 30px;
+    font-size: 0.55rem;
+    padding: 0 12px;
+  }
+
+  .hint-bar kbd {
+    font-size: 0.5rem;
+    padding: 1px 4px;
+  }
+
+}
+
+/* ── Very small phones (≤ 400px) ──────────────────────────── */
+@media (max-width: 400px) {
+
+  .hud-close-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.6rem;
+  }
+
+  .hud-dot {
+    display: none;
+  }
+
+}
+
+/* ── Large screens: give the panel a max width ─────────────── */
+@media (min-width: 1200px) {
+
+  .scan-zone {
+    top: 12%;
+    left: 22%;
+    right: 22%;
+    bottom: 12%;
+  }
+
 }

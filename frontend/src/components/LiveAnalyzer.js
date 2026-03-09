@@ -1,5 +1,6 @@
 /**
  * LiveAnalyzer.js  —  Live Webcam Analyser
+ * All logic identical — only markup structure refined for new design.
  */
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
@@ -57,9 +58,7 @@ export default function LiveAnalyzer({ onBack, onSwitchPhoto }) {
 
             const res = await fetch(`${API_URL}/api/analyse`, {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ image: frame }),
             });
 
@@ -79,16 +78,13 @@ export default function LiveAnalyzer({ onBack, onSwitchPhoto }) {
 
         }, ANALYSIS_INTERVAL_MS);
 
-
         // FPS counter
         fpsPollId = setInterval(() => {
           setFps(frameCount);
           frameCount = 0;
         }, 1000);
 
-      }
-
-      catch (err) {
+      } catch (err) {
 
         setError(
           err.name === "NotAllowedError"
@@ -103,14 +99,11 @@ export default function LiveAnalyzer({ onBack, onSwitchPhoto }) {
     startCamera();
 
     return () => {
-
       clearInterval(analysisPollId);
       clearInterval(fpsPollId);
-
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
-
     };
 
   }, []);
@@ -138,16 +131,12 @@ export default function LiveAnalyzer({ onBack, onSwitchPhoto }) {
 
     const handler = (e) => {
 
-      if (e.key === "Escape" || e.key === "q") {
-        onBack();
-      }
+      if (e.key === "Escape" || e.key === "q") onBack();
 
       if (e.key === "p" || e.key === "P") {
-
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(t => t.stop());
         }
-
         onSwitchPhoto();
       }
 
@@ -187,18 +176,24 @@ export default function LiveAnalyzer({ onBack, onSwitchPhoto }) {
 
     <div className="analyzer-root">
 
-      <div className="hud-bar">
-        <span className="brand">FruitScanner Pro</span>
-        <span className="separator">|</span>
-        <span className="mode-tag" style={{ color: "var(--accent)" }}>
-          LIVE CAMERA
-        </span>
-        <span className="clock">{time.toTimeString().slice(0,8)}</span>
-      </div>
+      {/* ── Top HUD bar ──────────────────────────────────────── */}
+      <header className="hud-bar">
+        <div className="hud-left">
+          <span className="hud-dot" />
+          <span className="brand">FruitScanner Pro</span>
+          <span className="hud-divider">|</span>
+          <span className="mode-tag">LIVE CAMERA</span>
+        </div>
+        <div className="hud-right">
+          <span className="clock">{time.toTimeString().slice(0, 8)}</span>
+          <button className="hud-close-btn" onClick={onBack} aria-label="Back to menu">✕</button>
+        </div>
+      </header>
 
-
+      {/* ── Main layout ──────────────────────────────────────── */}
       <div className="analyzer-body">
 
+        {/* ── Left: camera feed ──────────────────────────────── */}
         <div className="feed-area">
 
           {error ? (
@@ -222,28 +217,23 @@ export default function LiveAnalyzer({ onBack, onSwitchPhoto }) {
                 className="live-video"
               />
 
-              <canvas
-                ref={canvasRef}
-                style={{ display: "none" }}
-              />
+              <canvas ref={canvasRef} style={{ display: "none" }} />
 
+              {/* Scan zone overlay */}
               <div className={`scan-zone ${borderClass}`}>
-                <div className="scan-zone-label">[ SCAN ZONE ]</div>
-
+                <span className="scan-zone-label">[ SCAN ZONE ]</span>
                 <div className="scan-line" />
-
-                <Corner pos="tl"/>
-                <Corner pos="tr"/>
-                <Corner pos="bl"/>
-                <Corner pos="br"/>
+                <Corner pos="tl" />
+                <Corner pos="tr" />
+                <Corner pos="bl" />
+                <Corner pos="br" />
               </div>
             </>
 
           )}
-
         </div>
 
-
+        {/* ── Right: results panel ─────────────────────────── */}
         <ResultPanel
           result={result}
           mode="LIVE"
@@ -253,12 +243,12 @@ export default function LiveAnalyzer({ onBack, onSwitchPhoto }) {
 
       </div>
 
-
-      <div className="hint-bar">
+      {/* ── Bottom hint bar ─────────────────────────────────── */}
+      <footer className="hint-bar">
         <span><kbd>P</kbd> Photo mode</span>
-        <span><kbd>ESC</kbd> Back to menu</span>
-        <span>Place fruit in the scan zone</span>
-      </div>
+        <span className="hint-center">Place fruit in the scan zone</span>
+        <span><kbd>ESC</kbd> Menu</span>
+      </footer>
 
     </div>
 
@@ -273,14 +263,10 @@ function Corner({ pos }) {
 
 
 function getRipenessClass(ripeness) {
-
   return {
-
-    "Ripe": "zone-ripe",
+    "Ripe":      "zone-ripe",
     "Semi-Ripe": "zone-semi",
-    "Unripe": "zone-unripe",
-    "No Fruit": "zone-none",
-
+    "Unripe":    "zone-unripe",
+    "No Fruit":  "zone-none",
   }[ripeness] || "";
-
 }
