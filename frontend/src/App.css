@@ -1,191 +1,193 @@
 /* ============================================================
-   App.css  —  Global Styles for FruitScanner Pro
-   
-   Design language: Dark Terminal / Sci-Fi HUD
-   Fonts: "Exo 2" (headings) + "Share Tech Mono" (labels/data)
-   Palette: near-black bg, teal accent, green/amber/orange for ripeness
+   App.css — Global Design System · FruitScanner Pro
+
+   Aesthetic: Precision Instrument Panel
+   A dark, calibrated interface built for scientific clarity.
+   Every element earns its place — no decoration for its own sake.
+
+   Fonts  : "Exo 2" (display) + "Share Tech Mono" (data/labels)
+   Palette: Near-black base · Teal accent · Ripeness tricolor
    ============================================================ */
 
-/* ── CSS Variables (design tokens) ─────────────────────────── */
+/* ── Design Tokens ──────────────────────────────────────────── */
 :root {
-  --bg:           #0a0c12;
-  --panel:        #12151f;
-  --panel-border: #2a2f42;
-  --accent:       #00dcb4;       /* teal */
-  --accent-dim:   #007a64;
-  --ripe:         #32c850;       /* green  */
-  --semi:         #ffb020;       /* amber  */
-  --unripe:       #3c8cff;       /* blue   */
-  --none:         #787890;       /* grey   */
-  --white:        #e8e8f8;
-  --dim:          #484858;
-  --scan-line:    #00ffc8;
-  --font-hud:     'Share Tech Mono', monospace;
-  --font-display: 'Exo 2', sans-serif;
+  /* Backgrounds */
+  --bg:            #080b12;
+  --bg-raised:     #0d1120;
+  --bg-panel:      #101524;
+  --bg-glass:      rgba(12, 16, 28, 0.90);
+
+  /* Borders */
+  --border:        rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.13);
+  --panel-border:  rgba(255, 255, 255, 0.08);
+
+  /* Accent */
+  --accent:        #00d4aa;
+  --accent-dim:    #006e58;
+  --accent-glow:   rgba(0, 212, 170, 0.12);
+  --scan-line:     #00ffd0;
+
+  /* Ripeness colours */
+  --ripe:          #27ae60;
+  --ripe-glow:     rgba(39, 174, 96, 0.18);
+  --semi:          #e67e22;
+  --semi-glow:     rgba(230, 126, 34, 0.18);
+  --unripe:        #2980b9;
+  --unripe-glow:   rgba(41, 128, 185, 0.18);
+  --none:          #4a5568;
+
+  /* Text */
+  --white:         #d8e0ee;
+  --muted:         #7a8499;
+  --dim:           #404858;
+
+  /* Fonts */
+  --font-hud:      'Share Tech Mono', monospace;
+  --font-display:  'Exo 2', sans-serif;
+
+  /* Geometry */
+  --radius:        5px;
+  --radius-lg:     10px;
+  --hud-height:    48px;
+  --hint-height:   34px;
 }
 
-/* ── Reset & Base ───────────────────────────────────────────── */
+/* ── Reset ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 body {
   background: var(--bg);
   color: var(--white);
   font-family: var(--font-hud);
-  min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
 }
 
-/* ── App root wrapper ───────────────────────────────────────── */
+/* ── App Root ───────────────────────────────────────────────── */
 .app-root {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ── Shared: Top HUD bar ────────────────────────────────────── */
+/* ── Global Animations ──────────────────────────────────────── */
+@keyframes pulse      { 0%,100%{opacity:1} 50%{opacity:.35} }
+@keyframes scanDown   { from{top:0%} to{top:100%} }
+@keyframes fadeUp     { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn     { from{opacity:0} to{opacity:1} }
+@keyframes spin       { to{transform:rotate(360deg)} }
+@keyframes glowPulse  { 0%,100%{opacity:.6} 50%{opacity:1} }
+@keyframes dotPulse   { 0%,100%{opacity:1;box-shadow:0 0 6px currentColor}
+                        50%{opacity:.4;box-shadow:0 0 2px currentColor} }
+
+/* ── Shared: HUD bar ────────────────────────────────────────── */
 .hud-bar {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 44px;
-  background: rgba(0,0,0,0.72);
-  border-bottom: 1px solid var(--panel-border);
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  gap: 16px;
-  z-index: 100;
-  backdrop-filter: blur(6px);
+  padding: 0 18px;
+  height: var(--hud-height);
+  background: var(--bg-glass);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  flex-shrink: 0;
+  gap: 10px;
 }
 
-.hud-bar .brand {
+.brand {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: var(--accent);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.separator { color: var(--dim); font-size: 0.65rem; }
+
+.mode-tag {
+  font-family: var(--font-hud);
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
-.hud-bar .separator { color: var(--dim); }
-
-.hud-bar .mode-tag {
-  font-size: 0.7rem;
+.clock {
+  font-family: var(--font-hud);
+  font-size: 0.66rem;
   color: var(--dim);
   letter-spacing: 0.1em;
-}
-
-.hud-bar .clock {
   margin-left: auto;
-  font-size: 0.75rem;
-  color: var(--dim);
-  letter-spacing: 0.08em;
 }
 
-/* ── Shared: Bottom hint bar ────────────────────────────────── */
+/* ── Shared: hint bar ───────────────────────────────────────── */
 .hint-bar {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 32px;
-  background: rgba(0,0,0,0.6);
-  border-top: 1px solid var(--panel-border);
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-  font-size: 0.62rem;
+  justify-content: space-between;
+  padding: 0 18px;
+  height: var(--hint-height);
+  background: var(--bg-glass);
+  border-top: 1px solid var(--border);
+  font-size: 0.56rem;
   color: var(--dim);
-  letter-spacing: 0.06em;
-  z-index: 100;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
 }
 
 .hint-bar kbd {
-  background: var(--panel-border);
-  color: var(--white);
+  display: inline-block;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: var(--muted);
   padding: 1px 5px;
   border-radius: 3px;
   font-family: var(--font-hud);
-  font-size: 0.6rem;
+  font-size: 0.52rem;
+  margin-right: 3px;
 }
 
-/* ── Scan zone corner brackets (CSS-only) ───────────────────── */
-.scan-frame {
-  position: absolute;
-  pointer-events: none;
-}
-
-.scan-frame::before,
-.scan-frame::after,
-.scan-frame .inner::before,
-.scan-frame .inner::after {
-  content: '';
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border-color: inherit;
-  border-style: solid;
-}
-
-/* ── Animations ─────────────────────────────────────────────── */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
-}
-
-@keyframes scanDown {
-  0%   { top: 0; }
-  100% { top: 100%; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes flashBorder {
-  0%, 100% { border-color: transparent; }
-  50%       { border-color: var(--accent); }
-}
-
-@keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 220, 180, 0.15); }
-  50%       { box-shadow: 0 0 50px rgba(0, 220, 180, 0.35); }
-}
-
-/* ── Ripeness colour helpers ────────────────────────────────── */
-.color-ripe     { color: var(--ripe);   }
-.color-semi     { color: var(--semi);   }
-.color-unripe   { color: var(--unripe); }
-.color-none     { color: var(--none);   }
-.color-accent   { color: var(--accent); }
-
-/* ── Button base ────────────────────────────────────────────── */
+/* ── Shared: buttons ────────────────────────────────────────── */
 .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: transparent;
-  border: 1px solid var(--panel-border);
-  color: var(--dim);
+  border: 1px solid var(--border-strong);
+  color: var(--muted);
   font-family: var(--font-hud);
-  font-size: 0.75rem;
+  font-size: 0.62rem;
   letter-spacing: 0.1em;
-  padding: 8px 18px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
   cursor: pointer;
   transition: all 0.18s ease;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .btn:hover {
   border-color: var(--accent);
   color: var(--accent);
-  background: rgba(0, 220, 180, 0.06);
+  background: var(--accent-glow);
 }
 
-.btn-primary {
-  border-color: var(--accent);
-  color: var(--accent);
-}
+.btn-primary { border-color: var(--accent); color: var(--accent); }
 
 .btn-primary:hover {
-  background: rgba(0, 220, 180, 0.15);
-  box-shadow: 0 0 20px rgba(0, 220, 180, 0.2);
+  background: var(--accent-glow);
+  box-shadow: 0 0 20px rgba(0,212,170,0.12);
 }
+
+/* ── Ripeness colour utilities ──────────────────────────────── */
+.color-ripe   { color: var(--ripe);   }
+.color-semi   { color: var(--semi);   }
+.color-unripe { color: var(--unripe); }
+.color-none   { color: var(--none);   }
+.color-accent { color: var(--accent); }

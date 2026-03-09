@@ -1,6 +1,10 @@
-/* PhotoAnalyzer.css */
+/* ============================================================
+   PhotoAnalyzer.css — Photo Upload Mode
+   Shares layout skeleton with LiveAnalyzer (.analyzer-root etc.)
+   Only photo-specific styles here.
+   ============================================================ */
 
-/* Re-use layout from LiveAnalyzer */
+/* ── Photo display wrapper ───────────────────────────────────── */
 .photo-display {
   position: relative;
   width: 100%;
@@ -9,6 +13,7 @@
   align-items: center;
   justify-content: center;
   background: #000;
+  overflow: hidden;
 }
 
 .photo-img {
@@ -18,15 +23,13 @@
   display: block;
 }
 
-/* ── Scan zone (same as live) ─────────────────────────────── */
-/* zone-* and corner-* classes are shared from LiveAnalyzer.css */
-/* Import that file here too */
+/* ── Scan zone (photo mode reuses live styles) ───────────────── */
 .scan-zone {
   position: absolute;
-  top: 15%;
-  left: 15%;
-  right: 15%;
-  bottom: 15%;
+  top: 14%;
+  left: 14%;
+  right: 14%;
+  bottom: 14%;
   pointer-events: none;
 }
 
@@ -35,29 +38,31 @@
   top: -22px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.62rem;
-  color: var(--accent);
-  letter-spacing: 0.14em;
+  font-family: var(--font-hud);
+  font-size: 0.54rem;
+  color: rgba(0,212,170,0.45);
+  letter-spacing: 0.2em;
   white-space: nowrap;
+  text-transform: uppercase;
 }
 
 .corner {
   position: absolute;
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   border-color: var(--accent);
   border-style: solid;
   border-width: 0;
-  transition: border-color 0.3s;
+  transition: border-color 0.4s ease;
 }
 
-.corner-tl { top: 0;    left: 0;  border-top-width: 2px;    border-left-width: 2px;  }
-.corner-tr { top: 0;    right: 0; border-top-width: 2px;    border-right-width: 2px; }
-.corner-bl { bottom: 0; left: 0;  border-bottom-width: 2px; border-left-width: 2px;  }
-.corner-br { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+.corner-tl { top:0;    left:0;  border-top-width:2px;    border-left-width:2px;  }
+.corner-tr { top:0;    right:0; border-top-width:2px;    border-right-width:2px; }
+.corner-bl { bottom:0; left:0;  border-bottom-width:2px; border-left-width:2px;  }
+.corner-br { bottom:0; right:0; border-bottom-width:2px; border-right-width:2px; }
 
-.zone-ripe   .corner { border-color: var(--ripe);   }
-.zone-semi   .corner { border-color: var(--semi);   }
+.zone-ripe   .corner { border-color: var(--ripe); }
+.zone-semi   .corner { border-color: var(--semi); }
 .zone-unripe .corner { border-color: var(--unripe); }
 .zone-none   .corner { border-color: var(--accent); }
 
@@ -65,132 +70,151 @@
   position: absolute;
   left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--scan-line) 20%, var(--scan-line) 80%, transparent);
+  background: linear-gradient(
+    90deg, transparent, var(--scan-line) 20%, var(--scan-line) 80%, transparent
+  );
   box-shadow: 0 0 8px var(--scan-line);
   animation: scanDown 2.4s linear infinite;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
-/* ── Loading overlay ──────────────────────────────────────── */
+/* ── Loading overlay ─────────────────────────────────────────── */
 .photo-loading-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(8,11,18,0.65);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 14px;
-  font-size: 0.75rem;
+  font-family: var(--font-hud);
+  font-size: 0.68rem;
   color: var(--accent);
-  letter-spacing: 0.12em;
-  backdrop-filter: blur(2px);
+  letter-spacing: 0.14em;
+  backdrop-filter: blur(3px);
 }
 
 .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--panel-border);
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(255,255,255,0.07);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ── Error banner ─────────────────────────────────────────── */
+/* ── Error banner ────────────────────────────────────────────── */
 .photo-error-banner {
   position: absolute;
-  bottom: 60px;
+  bottom: 52px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255,68,68,0.12);
-  border: 1px solid #ff4444;
-  color: #ff6666;
-  font-size: 0.65rem;
-  padding: 8px 16px;
+  background: rgba(231,76,60,0.1);
+  border: 1px solid rgba(231,76,60,0.35);
+  color: #e74c3c;
+  font-family: var(--font-hud);
+  font-size: 0.6rem;
+  padding: 7px 14px;
+  border-radius: var(--radius);
   letter-spacing: 0.06em;
   white-space: nowrap;
-  max-width: 90%;
+  max-width: 88%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* ── Change photo button ──────────────────────────────────── */
+/* ── Change photo button ─────────────────────────────────────── */
 .change-photo-btn {
   position: absolute;
-  bottom: 20px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
 }
 
-/* ── Drop zone ────────────────────────────────────────────── */
+/* ── Drop zone ───────────────────────────────────────────────── */
 .drop-zone {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
-  border: 2px dashed var(--panel-border);
-  margin: 40px;
-  width: calc(100% - 80px);
-  height: calc(100% - 80px);
-  transition: all 0.2s ease;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  margin: 32px;
+  width: calc(100% - 64px);
+  height: calc(100% - 64px);
+  transition: all 0.22s ease;
   background: transparent;
-  animation: fadeIn 0.4s ease both;
+  animation: fadeIn 0.35s ease both;
 }
 
 .drop-zone:hover,
 .drop-zone.drag-over {
-  border-color: var(--accent);
-  background: rgba(0, 220, 180, 0.04);
+  border-color: rgba(0,212,170,0.4);
+  background: rgba(0,212,170,0.03);
 }
 
 .drop-zone.drag-over {
-  box-shadow: inset 0 0 40px rgba(0, 220, 180, 0.08);
+  box-shadow: inset 0 0 50px rgba(0,212,170,0.06);
 }
 
 .drop-icon {
-  font-size: 3rem;
+  font-size: 2.6rem;
   color: var(--dim);
-  transition: color 0.2s;
+  transition: color 0.22s, transform 0.22s;
+  line-height: 1;
 }
 
 .drop-zone:hover .drop-icon,
 .drop-zone.drag-over .drop-icon {
   color: var(--accent);
+  transform: scale(1.08);
 }
 
 .drop-title {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--white);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
 .drop-sub {
-  font-size: 0.68rem;
-  color: var(--dim);
+  font-family: var(--font-hud);
+  font-size: 0.62rem;
+  color: var(--muted);
   letter-spacing: 0.08em;
 }
 
 .drop-formats {
-  font-size: 0.58rem;
-  color: var(--accent-dim);
-  letter-spacing: 0.14em;
-  margin-top: 4px;
+  font-family: var(--font-hud);
+  font-size: 0.54rem;
+  color: var(--dim);
+  letter-spacing: 0.18em;
+  margin-top: 2px;
 }
 
 .drop-error {
-  font-size: 0.65rem;
-  color: #ff6666;
+  font-family: var(--font-hud);
+  font-size: 0.6rem;
+  color: #e74c3c;
   letter-spacing: 0.06em;
-  margin-top: 8px;
+  margin-top: 6px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .scan-zone { top:10%; left:10%; right:10%; bottom:10%; }
+  .drop-zone { margin: 20px; width: calc(100% - 40px); height: calc(100% - 40px); }
+}
+
+@media (max-width: 600px) {
+  .scan-zone { top:8%; left:8%; right:8%; bottom:8%; }
+  .corner { width: 15px; height: 15px; }
+  .drop-icon { font-size: 2rem; }
+  .drop-title { font-size: 0.88rem; }
+  .drop-zone { margin: 14px; width: calc(100% - 28px); height: calc(100% - 28px); }
 }

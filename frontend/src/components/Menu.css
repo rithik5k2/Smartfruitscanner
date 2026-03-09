@@ -1,223 +1,300 @@
-/* Menu.css — Launch Screen Styles */
+/* ============================================================
+   Menu.css — Launch Screen
+   
+   Purpose: First thing users see. Must communicate:
+   1. What this tool is (fruit ripeness AI scanner)
+   2. Two clear actions (Live / Photo)
+   3. Trust signals (backend status)
+   ============================================================ */
 
 .menu-root {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  flex-direction: column;
 }
 
-/* ── Background grid ──────────────────────────────────────────── */
+/* ── Atmospheric background ─────────────────────────────────── */
 .menu-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,220,180,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,220,180,0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
+    linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
   pointer-events: none;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
 }
 
-/* ── Glowing orb in centre ────────────────────────────────────── */
+/* Radial glow behind the card */
 .menu-glow {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -70%);
-  width: 500px;
-  height: 500px;
+  transform: translate(-50%, -60%);
+  width: 600px;
+  height: 400px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,220,180,0.08) 0%, transparent 70%);
-  animation: glowPulse 3s ease-in-out infinite;
+  background: radial-gradient(ellipse, rgba(0,212,170,0.07) 0%, transparent 68%);
+  animation: glowPulse 4s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* ── Main content block ───────────────────────────────────────── */
+/* ── HUD bar (menu-specific extends global) ─────────────────── */
+.menu-root .hud-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+}
+
+/* ── Central card ───────────────────────────────────────────── */
 .menu-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 36px;
-  animation: fadeIn 0.6s ease both;
+  gap: 28px;
   z-index: 1;
+  animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  width: min(520px, 92vw);
 }
 
-/* ── Title block ──────────────────────────────────────────────── */
+/* ── Eyebrow + title ────────────────────────────────────────── */
 .menu-title-block {
   text-align: center;
 }
 
 .menu-eyebrow {
   font-family: var(--font-hud);
-  font-size: 0.65rem;
+  font-size: 0.58rem;
   color: var(--accent-dim);
-  letter-spacing: 0.2em;
-  margin-bottom: 14px;
+  letter-spacing: 0.24em;
+  margin-bottom: 16px;
+  text-transform: uppercase;
 }
 
 .menu-title {
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 7vw, 5rem);
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
   font-weight: 800;
-  line-height: 0.92;
+  line-height: 0.9;
   color: var(--accent);
-  text-shadow:
-    0 0 40px rgba(0,220,180,0.4),
-    0 0 80px rgba(0,220,180,0.15);
   letter-spacing: -0.01em;
   text-transform: uppercase;
+  text-shadow:
+    0 0 50px rgba(0,212,170,0.35),
+    0 0 100px rgba(0,212,170,0.12);
 }
 
-.menu-subtitle {
+/* What the app actually does — explains the product */
+.menu-description {
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  line-height: 1.55;
+  max-width: 380px;
+}
+
+/* Feature tags row */
+.menu-tags {
+  display: flex;
+  gap: 8px;
   margin-top: 12px;
-  font-family: var(--font-hud);
-  font-size: 0.72rem;
-  color: var(--dim);
-  letter-spacing: 0.12em;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-/* ── Divider ──────────────────────────────────────────────────── */
+.menu-tag {
+  font-family: var(--font-hud);
+  font-size: 0.52rem;
+  letter-spacing: 0.14em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border-strong);
+  color: var(--muted);
+  background: rgba(255,255,255,0.03);
+}
+
+/* ── Divider ────────────────────────────────────────────────── */
 .menu-divider {
   display: flex;
   align-items: center;
-  gap: 14px;
-  width: 480px;
+  gap: 12px;
+  width: 100%;
 }
 
-.menu-divider span:first-child,
-.menu-divider span:last-child {
+.menu-divider-line {
   flex: 1;
   height: 1px;
-  background: var(--panel-border);
+  background: var(--border);
 }
 
 .menu-divider-text {
-  font-size: 0.58rem;
+  font-family: var(--font-hud);
+  font-size: 0.52rem;
   color: var(--dim);
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   white-space: nowrap;
-  flex: 0 !important;
-  height: auto !important;
-  background: none !important;
+  text-transform: uppercase;
 }
 
-/* ── Mode buttons ─────────────────────────────────────────────── */
+/* ── Mode buttons ───────────────────────────────────────────── */
 .menu-buttons {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  width: 480px;
+  gap: 10px;
+  width: 100%;
 }
 
 .menu-btn {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 20px 24px;
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
   color: var(--white);
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius-lg);
+  width: 100%;
 }
 
-.menu-btn::before {
+/* Left accent stripe */
+.menu-btn::after {
   content: '';
   position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
+  left: 0; top: 12%; bottom: 12%;
+  width: 2px;
   background: var(--accent);
-  transform: scaleY(0);
-  transition: transform 0.2s ease;
+  border-radius: 0 2px 2px 0;
+  opacity: 0;
+  transform: scaleY(0.4);
+  transition: all 0.2s ease;
 }
 
 .menu-btn:hover {
-  border-color: var(--accent);
-  background: rgba(0, 220, 180, 0.05);
-  transform: translateX(4px);
+  border-color: rgba(0,212,170,0.25);
+  background: rgba(14,18,32,0.95);
+  transform: translateX(3px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(0,212,170,0.08);
 }
 
-.menu-btn:hover::before {
+.menu-btn:hover::after {
+  opacity: 1;
   transform: scaleY(1);
 }
 
 .menu-btn-icon {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: var(--accent);
-  width: 36px;
+  width: 32px;
   text-align: center;
   flex-shrink: 0;
+  opacity: 0.85;
 }
 
 .menu-btn-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
+  min-width: 0;
 }
 
 .menu-btn-label {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: var(--white);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 
 .menu-btn-desc {
   font-family: var(--font-hud);
-  font-size: 0.65rem;
-  color: var(--dim);
+  font-size: 0.58rem;
+  color: var(--muted);
   letter-spacing: 0.06em;
 }
 
 .menu-btn-arrow {
   color: var(--dim);
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: color 0.2s, transform 0.2s;
+  flex-shrink: 0;
 }
 
 .menu-btn:hover .menu-btn-arrow {
   color: var(--accent);
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
-/* ── Status row ───────────────────────────────────────────────── */
+/* ── Backend status ─────────────────────────────────────────── */
 .menu-status {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.65rem;
+  gap: 8px;
+  font-family: var(--font-hud);
+  font-size: 0.6rem;
   color: var(--dim);
   letter-spacing: 0.06em;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  width: 100%;
 }
 
 .status-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.status-dot.ok       { background: var(--ripe);  box-shadow: 0 0 6px var(--ripe); }
-.status-dot.err      { background: #ff4444;       box-shadow: 0 0 6px #ff4444; animation: pulse 1.2s infinite; }
-.status-dot.checking { background: var(--semi);   animation: pulse 1s infinite; }
+.status-dot.ok       { background: var(--ripe); animation: dotPulse 2.5s ease infinite; }
+.status-dot.err      { background: #e74c3c;     animation: pulse 1s ease infinite; }
+.status-dot.checking { background: var(--semi);  animation: pulse 1.2s ease infinite; }
+
+.status-text { flex: 1; }
 
 .status-retry {
   background: none;
-  border: 1px solid var(--dim);
-  color: var(--dim);
+  border: 1px solid var(--border-strong);
+  color: var(--muted);
   font-family: var(--font-hud);
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   padding: 2px 8px;
+  border-radius: 3px;
   cursor: pointer;
   letter-spacing: 0.08em;
+  transition: all 0.15s;
+  flex-shrink: 0;
 }
 
 .status-retry:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Hint bar (menu) ────────────────────────────────────────── */
+.menu-root .hint-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .menu-content { gap: 20px; }
+  .menu-description { font-size: 0.76rem; }
+  .menu-btn { padding: 15px 16px; }
+  .menu-btn-label { font-size: 0.85rem; }
+  .menu-tags { display: none; }
+  .menu-glow { width: 300px; height: 250px; }
+}
