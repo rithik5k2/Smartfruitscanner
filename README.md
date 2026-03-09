@@ -1,102 +1,156 @@
-# 🍎 FruitScanner Pro — Full-Stack Web App
+# 🍎 FruitScanner Pro — AI Fruit Ripeness Detection
 
-Real-time and photo-based fruit ripeness detection.
-**Python (Flask) backend + React frontend.**
+![React](https://img.shields.io/badge/Frontend-React-61DAFB?style=flat&logo=react&logoColor=black)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
+![OpenCV](https://img.shields.io/badge/Vision-OpenCV-5C3EE8?style=flat&logo=opencv&logoColor=white)
+![Vercel](https://img.shields.io/badge/Frontend-Vercel-000000?style=flat&logo=vercel&logoColor=white)
+![Render](https://img.shields.io/badge/Backend-Render-46E3B7?style=flat&logo=render&logoColor=black)
 
----
+FruitScanner Pro is a **full-stack computer vision web app** that detects fruit ripeness in real-time using **OpenCV HSV color analysis**.
 
-## 📁 Project Structure
-
-```
-fruitscanner-pro/
-├── backend/
-│   ├── app.py          ← Flask server (API)
-│   ├── analyzer.py     ← OpenCV analysis logic
-│   └── requirements.txt
-└── frontend/
-    ├── public/
-    │   └── index.html
-    ├── src/
-    │   ├── index.js              ← React entry point
-    │   ├── App.js                ← Page router
-    │   ├── App.css               ← Global styles
-    │   └── components/
-    │       ├── Menu.js           ← Launch screen
-    │       ├── Menu.css
-    │       ├── LiveAnalyzer.js   ← Webcam mode
-    │       ├── LiveAnalyzer.css
-    │       ├── PhotoAnalyzer.js  ← Photo upload mode
-    │       ├── PhotoAnalyzer.css
-    │       ├── ResultPanel.js    ← Shared results panel
-    │       └── ResultPanel.css
-    └── package.json
-```
+Point your camera at a fruit — or upload a photo — and get an instant ripeness reading with confidence score.
 
 ---
 
-## 🚀 Setup & Run
+## 🌐 Live Demo
 
-### Step 1 — Install Python dependencies
+| | Link |
+|---|---|
+| 🖥 **Live App** | https://smartfruitscanner.vercel.app |
+| ⚙️ **Backend API** | https://smartfruitscanner.onrender.com |
+| 💚 **Health Check** | https://smartfruitscanner.onrender.com/api/health |
 
-```bash
-cd backend
-pip install -r requirements.txt
-```
+---
 
-### Step 2 — Start the Python backend
+## ✨ Features
 
-```bash
-python app.py
-```
-
-You should see:
-```
-FruitScanner Pro — Backend Server
-Running at: http://localhost:5000
-```
-
-### Step 3 — Install React dependencies (first time only)
-
-Open a **new terminal window**, then:
-
-```bash
-cd frontend
-npm install
-```
-
-### Step 4 — Start the React frontend
-
-```bash
-npm start
-```
-
-Browser opens automatically at **http://localhost:3000**
+- 📷 **Live webcam detection** — real-time ripeness scanning at 600ms intervals
+- 🖼 **Photo upload analysis** — drag-and-drop or browse any image
+- 🧠 **OpenCV HSV color analysis** — no ML model required, fast and lightweight
+- 📊 **Confidence scoring** — percentage breakdown of red / amber / green color distribution
+- 🎯 **Scan zone overlay** — visual HUD guides fruit placement
+- 📱 **Responsive design** — works on desktop and mobile
 
 ---
 
 ## 🔧 How It Works
 
 ```
-Browser (React)                  Python (Flask)
-───────────────                  ──────────────
-[Webcam frame]  ──POST /api/analyse──►  [Decode base64]
-[Photo upload]                          [OpenCV HSV analysis]
-                ◄──JSON result────────  [Return ripeness data]
-[Show result overlay + panel]
+User Camera / Uploaded Image
+         ↓
+  React Frontend (Vercel)
+         ↓
+  POST /api/analyse  (base64 image)
+         ↓
+  FastAPI Backend (Render)
+         ↓
+  OpenCV: RGB → HSV Conversion
+         ↓
+  Color Masking → Pixel Ratio
+         ↓
+  Ripeness Classification (JSON)
+         ↓
+  Displayed on UI with overlay
 ```
-
-1. **Live mode**: React captures webcam frames every 350ms via Canvas API, converts to base64, sends to Flask
-2. **Photo mode**: React reads uploaded file as base64 via FileReader API, sends to Flask
-3. **Flask** decodes the base64 image with OpenCV, runs HSV colour analysis, returns JSON
-4. **React** displays the result with animated HUD overlays
 
 ---
 
-## 🛑 Troubleshooting
+## 🍌 Ripeness Detection Logic
 
-| Problem | Fix |
-|---------|-----|
-| "Backend offline" | Make sure `python app.py` is running |
-| "Camera access denied" | Allow camera in browser permissions |
-| CORS error | Check `flask-cors` is installed |
-| Module not found | Run `pip install -r requirements.txt` again |
+Images are converted from **RGB → HSV color space**. Pixel ratios across color ranges determine ripeness.
+
+| Dominant Color | Ripeness | Meaning |
+|---|---|---|
+| 🔴 Red | Ripe | Ready to eat |
+| 🟡 Yellow / Amber | Semi-Ripe | 1–2 days to peak |
+| 🟢 Green | Unripe | Needs more time |
+
+**Pipeline:**
+```
+Image → HSV Conversion → Color Masking → Pixel % → Ripeness + Confidence
+```
+
+---
+
+## ⚙️ Tech Stack
+
+**Frontend**
+- React.js
+- HTML5 Canvas API (frame capture)
+- Web Camera API (`getUserMedia`)
+- CSS animations
+
+**Backend**
+- FastAPI (Python)
+- OpenCV (`cv2`)
+- NumPy
+
+**Deployment**
+- Frontend → **Vercel**
+- Backend → **Render**
+
+---
+
+## 📁 Project Structure
+
+```
+smartfruitscanner/
+│
+├── backend/
+│   ├── main.py           ← FastAPI server + /api/analyse endpoint
+│   ├── analyzer.py       ← OpenCV HSV analysis logic
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── public/
+│   │   └── index.html
+│   └── src/
+│       ├── App.js
+│       ├── App.css
+│       ├── index.js
+│       └── components/
+│           ├── Menu.js           ← Launch screen
+│           ├── LiveAnalyzer.js   ← Webcam mode
+│           ├── PhotoAnalyzer.js  ← Photo upload mode
+│           └── ResultPanel.js    ← Results display
+│
+└── README.md
+```
+
+---
+
+## 🌍 Deployment Architecture
+
+```
+User Browser
+     ↓
+Vercel  (React — Static Frontend)
+     ↓  POST /api/analyse
+Render  (FastAPI — Python Backend)
+     ↓
+OpenCV Image Processing
+```
+
+---
+
+## ⚠️ Note on Cold Starts
+
+The backend runs on **Render's free tier**, which spins down after inactivity.  
+The **first request may take 20–30 seconds** to wake the server. Subsequent requests are fast.
+
+---
+
+## 🔮 Future Improvements
+
+- 🤖 CNN-based ripeness model for higher accuracy
+- 🍇 Multi-fruit detection in a single frame
+- 📱 Native mobile camera optimization
+- 🏷 Fruit type classification (banana vs apple vs mango)
+- 📈 Historical ripeness trend tracking
+
+---
+
+## 👨‍💻 Author
+
+**Rithik Rao**  
+GitHub: [@rithik5k2](https://github.com/rithik5k2)
